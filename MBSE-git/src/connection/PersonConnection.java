@@ -10,6 +10,7 @@ public class PersonConnection implements Runnable {
 
 	Socket socket = null;
 	int id;
+	int mode = 0;
 	PrintWriter out;
 	BufferedReader in;
 	boolean connected = true;
@@ -55,7 +56,10 @@ public class PersonConnection implements Runnable {
 		}
 		
 		private void handleLine(String line) {
-			
+			switch (line)
+			{
+			case "login": { if (mode == 0) { out.println("You connected!"); mode = 1; break; } }
+			}
 		}
 	
 
