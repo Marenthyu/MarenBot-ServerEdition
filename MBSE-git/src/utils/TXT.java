@@ -2,15 +2,22 @@ package utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.List;
 
 public class TXT {
 
-	public String readFromFile(String path) {
-		
+	static Charset charset = StandardCharsets.UTF_8;
+	
+	public List<String> readFromFile(String path) throws IOException {
+		File file = new File(path);
+		List<String> stuff = Files.readAllLines(file.toPath().toAbsolutePath(), charset);
+		return stuff;
 	}
 	
-	public void writeToFile(String path, String stuff) throws IOException {
+	public static void writeToFile(String path, String stuff) throws IOException {
 		File file = new File(path);
 		try {
 			Files.write(file.toPath().toAbsolutePath(), stuff.getBytes());
