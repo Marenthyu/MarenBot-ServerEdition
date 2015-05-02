@@ -1,13 +1,6 @@
 package main;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-
 import connection.ConnectionManager;
 
 public class Starter {
@@ -18,10 +11,10 @@ public class Starter {
 		try {
 			ConnectionManager.start(1515);
 		} catch (IOException e) {
-			System.err.println("Couldn't start ConnectionManager. Terminating.");
+			System.err
+					.println("Couldn't start ConnectionManager. Terminating.");
 			System.exit(1);
 		}
-		
 
 	}
 
