@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Manager Class for all running instances of {@link Bot}s. <br>
  * Call {@link #initialize()} before using any other method.
  * 
- * @author Peter Fredebold
+ * @author Peter "Marenthyu" Fredebold
  * @see {@link #newInstance} {@link #initialize()}
  *
  */
@@ -15,13 +15,13 @@ public class InstanceManager {
 	/**
 	 * {@link ArrayList} of all running instances.
 	 */
-	private ArrayList<Bot> instances;
+	private static ArrayList<Bot> instances;
 
 	/**
 	 * Initializes the InstanceManager by creating an empty {@link ArrayList}
 	 * which will be filled with all running instances of {@link Bot}s.
 	 */
-	public void initialize() {
+	public static void initialize() {
 		instances = new ArrayList<Bot>();
 	}
 
@@ -31,7 +31,7 @@ public class InstanceManager {
 	 * 
 	 * @return an {@link ArrayList} of {@link Bot}s that are currently running.
 	 */
-	public ArrayList<Bot> getAllInstances() {
+	public static ArrayList<Bot> getAllInstances() {
 		return instances;
 	}
 
@@ -49,7 +49,7 @@ public class InstanceManager {
 	 *         <b>false</b> if another instance in that channel already exists
 	 *         </p>
 	 */
-	public boolean newInstance(String channel) {
+	public static boolean newInstance(String channel) {
 		if (getInstanceByChannel(channel) == null)
 			try {
 				instances.add(new Bot("MarenBot", channel));
@@ -78,7 +78,7 @@ public class InstanceManager {
 	 *         <b>false</b> if no instance was in that channel
 	 *         </p>
 	 */
-	public boolean terminateInstanceByChannel(String channel) {
+	public static boolean terminateInstanceByChannel(String channel) {
 
 		for (Bot b : instances) {
 			if (b.getChannel().equals(channel)) {
@@ -106,7 +106,7 @@ public class InstanceManager {
 	 *         channel
 	 *         </p>
 	 */
-	public Bot getInstanceByChannel(String channel) {
+	public static Bot getInstanceByChannel(String channel) {
 		for (Bot b : instances) {
 			if (b.getChannel().equals(channel)) {
 				return b;
