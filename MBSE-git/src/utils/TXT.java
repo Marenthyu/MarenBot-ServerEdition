@@ -29,4 +29,25 @@ public class TXT {
 		}
 	}
 	
+	public static void writeToFile(String path, 
+			List<String> stuff) throws IOException {
+		
+		String out = "";
+		
+		for (String s:stuff) {
+			out+=s+System.lineSeparator();
+		}
+		
+		File file = new File(path);
+		
+		try {
+			Files.write(file.toPath().toAbsolutePath(), out.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Error while writing File");
+			throw e;
+		}
+	}
+	
 }
