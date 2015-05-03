@@ -58,7 +58,8 @@ public class PersonConnection implements Runnable {
 		}
 	}
 
-	private void handleLine(String line) {
+	private void handleLine(String line) throws IOException {
+		if (line==null) throw new IOException();
 		switch (line) {
 		case "join": {
 			if (mode == 0) {
@@ -82,6 +83,7 @@ public class PersonConnection implements Runnable {
 					out.println("Succesfully joined " + line);
 					mode = 0;
 					out.println("Awaiting Input...");
+					
 				} else {
 					out.println("Couldn't join " + line);
 					mode = 0;

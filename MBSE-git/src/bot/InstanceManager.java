@@ -52,7 +52,8 @@ public class InstanceManager {
 	public static boolean newInstance(String channel) {
 		if (getInstanceByChannel(channel) == null)
 			try {
-				instances.add(new Bot("MarenBot", channel));
+				instances.add(new Bot("MarenBot", "#" + channel));
+				System.out.println("New instance in #" + channel);
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -81,7 +82,7 @@ public class InstanceManager {
 	public static boolean terminateInstanceByChannel(String channel) {
 
 		for (Bot b : instances) {
-			if (b.getChannel().equals(channel)) {
+			if (b.getChannel().equals("#" + channel)) {
 				b.terminate();
 				instances.remove(b);
 				System.out.println("Terminated instance \"" + channel + "\"");
@@ -108,7 +109,7 @@ public class InstanceManager {
 	 */
 	public static Bot getInstanceByChannel(String channel) {
 		for (Bot b : instances) {
-			if (b.getChannel().equals(channel)) {
+			if (b.getChannel().equals("#" + channel)) {
 				return b;
 			}
 		}

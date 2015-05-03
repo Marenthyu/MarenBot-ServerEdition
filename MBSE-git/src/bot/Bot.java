@@ -17,6 +17,7 @@ public class Bot extends PircBot {
 			connect("irc.twitch.tv", 6667,
 					"oauth:ulvex0dv2jk7nz38fd9l6bcqofw3ds");
 			joinChannel(channel);
+			System.out.println("Joined " + channel);
 		} catch (IOException | IrcException e) {
 			System.err.println("Failed to connect to channel " + channel);
 			throw e;
@@ -26,13 +27,13 @@ public class Bot extends PircBot {
 				channel,
 				"MarenBot (ServerEdition) has joined this Channel but is not yet ready to rock.");
 	}
-	
+
 	public String getChannel() {
 		return channel;
 	}
-	
+
 	public void terminate() {
-		sendMessage(channel,"Terminating Connection to this channel");
+		sendMessage(channel, "Terminating Connection to this channel");
 		this.disconnect();
 		this.dispose();
 	}
