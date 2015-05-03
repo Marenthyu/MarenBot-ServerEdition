@@ -33,9 +33,16 @@ public class Bot extends PircBot {
 	}
 
 	public void terminate() {
+		//TODO Message doesn't get fired
 		sendMessage(channel, "Terminating Connection to this channel");
 		this.disconnect();
 		this.dispose();
+	}
+
+	public void onMessage(String channel, String sender, String login,
+			String hostname, String message) {
+		System.out.println("Message in " + channel + " from " + sender + ": "
+				+ message);
 	}
 
 }
