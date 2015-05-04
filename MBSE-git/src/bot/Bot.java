@@ -33,10 +33,17 @@ public class Bot extends PircBot {
 	}
 
 	public void terminate() {
-		//TODO Message doesn't get fired
+		// TODO Message doesn't get fired
 		sendMessage(channel, "Terminating Connection to this channel");
+		while (this.getOutgoingQueueSize() > 0) {
+			System.out
+					.println("Termination of "
+							+ channel
+							+ " imminent, but Still some messages to be sent out. Waiting...");
+		}
 		this.disconnect();
 		this.dispose();
+
 	}
 
 	public void onMessage(String channel, String sender, String login,
