@@ -39,7 +39,7 @@ public class Bot extends PircBot {
 			System.out
 					.println("Termination of "
 							+ channel
-							+ " imminent, but Still some messages to be sent out. Waiting...");
+							+ " imminent, but Still some messages to be sent out. Running around in circles...");
 		}
 		this.disconnect();
 		this.dispose();
