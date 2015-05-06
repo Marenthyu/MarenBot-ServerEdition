@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class ProfileManager {
 
-	File basefolder = new File("profiles\\");
+	static File basefolder = new File("profiles\\");
 	ArrayList<Profile> profiles = new ArrayList<Profile>();
 
 	/**
@@ -35,6 +35,10 @@ public class ProfileManager {
 		for (String name : directories) {
 			profiles.add(new Profile(name));
 		}
+	}
+	
+	public static File getBaseFolder() {
+		return basefolder;
 	}
 
 }
