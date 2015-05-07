@@ -15,14 +15,15 @@ public class Option {
 	public Option(String n, String v, Profile p) {
 		this(n, p);
 		value = v;
+		write();
 	}
 
 	public Option(String n, Profile p) {
 		name = n;
 
 		profile = p;
-		file = new File(ProfileManager.getBaseFolder().getAbsolutePath() + "\\"
-				+ profile.getName() + "\\options.txt");
+		file = new File(ProfileManager.getBaseFolder().getAbsolutePath() + "/"
+				+ profile.getName() + "/options.txt");
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
@@ -31,7 +32,10 @@ public class Option {
 				e.printStackTrace();
 			}
 		}
+		value = "";
 		read();
+
+		write();
 	}
 
 	public void set(String newvalue) {
@@ -40,20 +44,25 @@ public class Option {
 	}
 
 	private void write() {
+		boolean existed = false;
 		String f = file.getAbsolutePath();
 		try {
 			List<String> lines = TXT.readFromFile(f);
 			for (String l : lines) {
 
-				String[] parts = l.split("=");
+				String[] parts = l.split("◘");
 				if (parts[0].equals(name)) {
 
 					lines.remove(l);
-					lines.add(parts[0] + "=" + value);
+					lines.add(parts[0] + "◘" + value);
+					existed = true;
 					break;
 				}
 			}
-			TXT.writeToFile(f, lines);
+			if (existed)
+				TXT.writeToFile(f, lines);
+			else
+				TXT.writeToFile(f, name + "◘" + value);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,7 +73,7 @@ public class Option {
 		try {
 			List<String> lines = TXT.readFromFile(file.getAbsolutePath());
 			for (String l : lines) {
-				String[] parts = l.split("=");
+				String[] parts = l.split("◘");
 				if (parts[0].equals(name)) {
 					value = parts[1];
 					return value;

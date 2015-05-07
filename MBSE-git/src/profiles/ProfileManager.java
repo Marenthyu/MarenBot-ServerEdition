@@ -14,13 +14,13 @@ import java.util.ArrayList;
  */
 public class ProfileManager {
 
-	static File basefolder = new File("profiles\\");
-	ArrayList<Profile> profiles = new ArrayList<Profile>();
+	static File basefolder = new File("profiles");
+	static ArrayList<Profile> profiles = new ArrayList<Profile>();
 
 	/**
 	 * Initializes Profile Manager for use.
 	 */
-	public void intialize() {
+	public static void intialize() {
 		if (!basefolder.exists()) {
 			basefolder.mkdir();
 		}
@@ -36,9 +36,20 @@ public class ProfileManager {
 			profiles.add(new Profile(name));
 		}
 	}
-	
+
 	public static File getBaseFolder() {
 		return basefolder;
+	}
+
+	public static Profile getProfileByName(String name) {
+		for (Profile p : profiles) {
+			if (p.name.equals(name)) {
+				return p;
+			}
+		}
+		Profile p = new Profile(name);
+		profiles.add(p);
+		return p;
 	}
 
 }

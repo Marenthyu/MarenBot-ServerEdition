@@ -2,6 +2,7 @@ package main;
 
 import java.io.IOException;
 
+import profiles.ProfileManager;
 import bot.InstanceManager;
 import connection.ConnectionManager;
 
@@ -13,6 +14,7 @@ public class Starter {
 		try {
 			ConnectionManager.start(1515);
 			InstanceManager.initialize();
+			ProfileManager.intialize();
 		} catch (IOException e) {
 			System.err
 					.println("Couldn't start ConnectionManager. Terminating.");

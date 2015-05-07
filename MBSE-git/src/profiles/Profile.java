@@ -23,12 +23,14 @@ public class Profile {
 
 	public Profile(String name) {
 		File file = new File(ProfileManager.getBaseFolder().getAbsolutePath()
-				+ "\\" + name);
+				+ "/" + name);
+		System.out.println(file.getAbsolutePath());
 		this.name = name;
 		if (!file.exists()) {
 			file.mkdir();
 		}
-		file = new File(file.getAbsolutePath() + "\\options.txt");
+		file = new File(file.getAbsolutePath() + "/options.txt");
+		
 		if (!file.exists()) {
 			options.add(new Option("name", name, this));
 			options.add(new Option("xp", "0", this));
@@ -79,5 +81,44 @@ public class Profile {
 		if (o != null)
 			Integer.parseInt(o.value);
 		return 0;
+	}
+
+	public Command getCommand(String name) {
+		for (Command c : commands) {
+			if (c.name.equals(name)) {
+				return c;
+			}
+		}
+		return null;
+	}
+
+	public boolean addCommand(String name, CommandType type, PermLevel pl,
+			int c, String v) {
+		System.out.println("PROFILE Adding command...");
+		boolean exists = true;
+
+		try {
+			getCommand(name).getName();
+		} catch (NullPointerException e) {
+			System.out.println("NULL POINTER! NULL POINTER EVERYWHERE!");
+			exists = false;
+		}
+
+		if (!exists) {
+			commands.add(new Command(name, type, pl, c, v, this));
+			return true;
+		}
+		return false;
+	}
+
+	public boolean delCommand(String name) {
+		if (getCommand(name) != null) {
+			for (Command c : commands) {
+				if (c.name.equals(name)) {
+					return commands.remove(c);
+				}
+			}
+		}
+		return false;
 	}
 }
