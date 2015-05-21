@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//src/connection/ClientConnection.java=UTF-8
 encoding//src/profiles/Command.java=UTF-8
 encoding//src/profiles/Option.java=UTF-8
 encoding//src/profiles/Profile.java=UTF-8

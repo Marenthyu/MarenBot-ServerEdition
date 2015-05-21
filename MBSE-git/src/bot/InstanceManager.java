@@ -115,5 +115,14 @@ public class InstanceManager {
 		}
 		return null;
 	}
+	
+	public static boolean status(String channel) {
+		try {
+			getInstanceByChannel(channel).getName();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 }

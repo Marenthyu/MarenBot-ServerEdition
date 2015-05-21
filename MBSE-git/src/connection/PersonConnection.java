@@ -250,6 +250,15 @@ public class PersonConnection implements Runnable {
 				}
 				break;
 			}
+			case 10: {
+				if (selectedBot.removeCommand(line)) {
+					mode = 0;
+					out.println("Command removed");
+				} else {
+					mode = 0;
+					out.println("Could not remove command");
+				}
+			}
 			}
 		}
 		}

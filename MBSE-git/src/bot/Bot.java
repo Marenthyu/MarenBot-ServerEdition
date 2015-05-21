@@ -18,8 +18,9 @@ public class Bot extends PircBot {
 
 	private String channel;
 	private Profile profile;
-	private ArrayList<String[]> songrequests, betsmade;
-	private boolean bets;
+	private ArrayList<String[]> songrequests = new ArrayList<String[]>(),
+			betsmade;
+	public boolean bets;
 
 	public Bot(String Name, String Channel) throws Exception {
 		profile = ProfileManager.getProfileByName(Channel.replace("#", ""));
@@ -38,7 +39,7 @@ public class Bot extends PircBot {
 		}
 		sendMessage(
 				channel,
-				"MarenBot (ServerEdition) has joined this Channel but is not yet ready to rock.");
+				"MarenBot (ServerEdition) has joined this Channel and is ready to rock!");
 		bets = false;
 		betsmade = new ArrayList<String[]>();
 	}
@@ -214,6 +215,10 @@ public class Bot extends PircBot {
 
 	}
 
+	public boolean removeCommand(String name) {
+		return profile.delCommand(name);
+	}
+	
 	public Command getCommand(String name) {
 
 		Command c;
@@ -286,7 +291,10 @@ public class Bot extends PircBot {
 	}
 
 	public void songRequest(String sender, String otherargs) {
-		songrequests.add(new String[] { sender, otherargs });
+		String[] s = new String[2];
+		s[0] = sender;
+		s[1] = otherargs;
+		songrequests.add(s);
 		sendMessage(
 				channel,
 				"Thanks for the Songrequest, "
@@ -295,7 +303,14 @@ public class Bot extends PircBot {
 	}
 
 	public String[] getOldestSongrequest() {
-		return songrequests.get(songrequests.size() - 1);
+		if (songrequests.size() > 0)
+			return songrequests.get(songrequests.size() - 1);
+		else {
+			String[] s = new String[2];
+			s[0] = "NO REQUESTS";
+			s[1] = "NO REQUESTS";
+			return s;
+		}
 	}
 
 	public void deleteOldestSongrequest() {
@@ -544,7 +559,7 @@ public class Bot extends PircBot {
 		}
 
 	}
-	
+
 	public void shutdown(String sender, String otherargs) {
 		terminate();
 	}

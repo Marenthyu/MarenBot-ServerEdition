@@ -12,17 +12,17 @@ public class TXT {
 	static Charset charset = StandardCharsets.UTF_8;
 
 	public static List<String> readFromFile(String path) throws IOException {
-		System.out.println("Reading from file "+path);
+		// System.out.println("Reading from file "+path);
 		File file = new File(path);
 		List<String> stuff = Files.readAllLines(file.toPath().toAbsolutePath(),
 				charset);
-		System.out.println("Done reading. read: "+stuff);
+		// System.out.println("Done reading. read: "+stuff);
 		return stuff;
 	}
 
 	public static void writeToFile(String path, String stuff)
 			throws IOException {
-		System.out.println("Writing "+stuff+" to file "+path);
+		// System.out.println("Writing "+stuff+" to file "+path);
 		File file = new File(path);
 		try {
 			Files.write(file.toPath().toAbsolutePath(), stuff.getBytes());
@@ -32,14 +32,14 @@ public class TXT {
 			System.err.println("Error while writing File");
 			throw e;
 		}
-		System.out.println("Done writing");
+		// System.out.println("Done writing");
 	}
 
 	public static void writeToFile(String path, List<String> stuff)
 			throws IOException {
 
-		System.out.println("Writing to file "+path);
-		
+		// System.out.println("Writing to file "+path);
+
 		String out = "";
 
 		for (String s : stuff) {
@@ -56,7 +56,7 @@ public class TXT {
 			System.err.println("Error while writing File");
 			throw e;
 		}
-		System.out.println("Done writing.");
+		// System.out.println("Done writing.");
 	}
 
 }
