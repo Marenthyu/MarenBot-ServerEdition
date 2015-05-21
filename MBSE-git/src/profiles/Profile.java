@@ -30,7 +30,7 @@ public class Profile {
 			file.mkdir();
 		}
 		file = new File(file.getAbsolutePath() + "/options.txt");
-		
+
 		if (!file.exists()) {
 			options.add(new Option("name", name, this));
 			options.add(new Option("xp", "0", this));
@@ -38,8 +38,26 @@ public class Profile {
 			try {
 				List<String> lines = TXT.readFromFile(file.getAbsolutePath());
 				for (String l : lines) {
-					String[] parts = l.split("=");
+					String[] parts = l.split("◘");
 					options.add(new Option(parts[0], this));
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		file = new File(ProfileManager.getBaseFolder().getAbsolutePath()
+				+ "/" + name);
+		file = new File(file.getAbsolutePath() + "/commands.txt");
+
+		if (!file.exists()) {
+
+		} else {
+			try {
+				List<String> lines = TXT.readFromFile(file.getAbsolutePath());
+				for (String l : lines) {
+					String[] parts = l.split("◘");
+					commands.add(new Command(parts[0], this));
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -59,12 +77,16 @@ public class Profile {
 				return o;
 			}
 		}
-		return null;
+		return new Option("INVALID", "INVALID", this);
+	}
+
+	public void addOption(String name, String value) {
+		options.add(new Option(name, value, this));
 	}
 
 	public boolean addFunds(String channel, int amount) {
 		Option o = getOption(channel);
-		if (o == null) {
+		if (o.getValue().equals("INVALID")) {
 			o = new Option(channel, "0", this);
 			options.add(o);
 
@@ -78,8 +100,14 @@ public class Profile {
 
 	public int getFunds(String channel) {
 		Option o = getOption(channel);
-		if (o != null)
-			Integer.parseInt(o.value);
+		
+		if (o != null) {
+			if (o.getValue().equals("INVALID")) {
+				addOption(channel, "0");
+				o = getOption(channel);
+			}
+			return Integer.parseInt(o.getValue());
+			}
 		return 0;
 	}
 

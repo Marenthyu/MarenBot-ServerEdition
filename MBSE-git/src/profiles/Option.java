@@ -61,8 +61,10 @@ public class Option {
 			}
 			if (existed)
 				TXT.writeToFile(f, lines);
-			else
-				TXT.writeToFile(f, name + "◘" + value);
+			else {
+				lines.add(name + "◘" + value);
+				TXT.writeToFile(f, lines);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -87,6 +89,10 @@ public class Option {
 		}
 		value = null;
 		return null;
+	}
+
+	public String getValue() {
+		return value;
 	}
 
 }

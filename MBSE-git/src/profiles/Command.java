@@ -97,8 +97,12 @@ public class Command {
 			if (existed)
 				TXT.writeToFile(f, lines);
 			else
-				TXT.writeToFile(f, name + "◘" + type.toString() + "◘"
+			{
+				lines.add(name + "◘" + type.toString() + "◘"
 						+ permlevel.toString() + "◘" + cost + "◘" + value);
+				TXT.writeToFile(f, lines);
+				
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
