@@ -3,9 +3,12 @@ package bot;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.PircBot;
+import org.jibble.pircbot.User;
 
 import profiles.Command;
 import profiles.CommandType;
@@ -13,6 +16,7 @@ import profiles.Option;
 import profiles.PermLevel;
 import profiles.Profile;
 import profiles.ProfileManager;
+import utils.MATH;
 
 public class Bot extends PircBot {
 
@@ -21,6 +25,12 @@ public class Bot extends PircBot {
 	private ArrayList<String[]> songrequests = new ArrayList<String[]>(),
 			betsmade;
 	public boolean bets;
+	private Timer timer = new Timer();
+	private TimerTask passivefundgain, betsclosure;
+	public boolean clientconnected = false;
+	public ArrayList<Integer> ratings = new ArrayList<Integer>();
+	private boolean userrequests = false;
+	public String currUser = "NONE";
 
 	public Bot(String Name, String Channel) throws Exception {
 		profile = ProfileManager.getProfileByName(Channel.replace("#", ""));
@@ -37,11 +47,30 @@ public class Bot extends PircBot {
 			throw e;
 
 		}
-		sendMessage(
-				channel,
-				"MarenBot (ServerEdition) has joined this Channel and is ready to rock!");
+		sendMessage(channel,
+				"MarenBot (ServerEdition) has joined this channel and is ready to rock!");
 		bets = false;
 		betsmade = new ArrayList<String[]>();
+
+		clientconnected = false;
+
+		passivefundgain = new TimerTask() {
+
+			@Override
+			public void run() {
+				System.out.println("It's been a minute in " + channel
+						+ ". Giving Bucks to all!");
+				int multiplicator = 1;
+				if (clientconnected) {
+					multiplicator = 2;
+				}
+				addBucksAll("SERVER", 1 * multiplicator + "");
+			}
+
+		};
+
+		timer.schedule(passivefundgain, 0, 60000);
+
 	}
 
 	public String getChannel() {
@@ -50,7 +79,7 @@ public class Bot extends PircBot {
 
 	public void terminate() {
 		// TODO Message doesn't get fired
-		sendMessage(channel, "Terminating Connection to this channel");
+		sendMessage(channel, "Terminating connection to this channel");
 		while (this.getOutgoingQueueSize() > 0) {
 			System.out
 					.println("Termination of "
@@ -126,7 +155,7 @@ public class Bot extends PircBot {
 						channel,
 						"Sorry, "
 								+ sender
-								+ ", but it appears that you don't have enough currency in thic channel to execute this command.");
+								+ ", but it appears that you don't have enough TrampBucks to execute this command.");
 				return;
 			}
 			o.set((Integer.parseInt(o.getValue()) - c.getCost()) + "");
@@ -218,7 +247,7 @@ public class Bot extends PircBot {
 	public boolean removeCommand(String name) {
 		return profile.delCommand(name);
 	}
-	
+
 	public Command getCommand(String name) {
 
 		Command c;
@@ -285,9 +314,9 @@ public class Bot extends PircBot {
 				channel,
 				sender
 						+ "'s TrampBucks: T"
-						+ ((float) ((float) (ProfileManager
+						+ MATH.round(((float) ((float) (ProfileManager
 								.getProfileByName(sender).getFunds(channel
-								.replace("#", "")))) / 100));
+								.replace("#", "")))) / 100), 2));
 	}
 
 	public void songRequest(String sender, String otherargs) {
@@ -304,7 +333,7 @@ public class Bot extends PircBot {
 
 	public String[] getOldestSongrequest() {
 		if (songrequests.size() > 0)
-			return songrequests.get(songrequests.size() - 1);
+			return songrequests.get(0);
 		else {
 			String[] s = new String[2];
 			s[0] = "NO REQUESTS";
@@ -327,23 +356,56 @@ public class Bot extends PircBot {
 		ProfileManager.getProfileByName(sender).addFunds(
 				channel.replace("#", ""), win);
 		if (win >= 100) {
-			sendMessage(channel, "Gratulations, " + sender
-					+ ", you have tested your luck and won T"
-					+ ((float) ((float) (win - 100)) / 100));
+			sendMessage(
+					channel,
+					"Congratulations, "
+							+ sender
+							+ ", you have tested your luck and won T"
+							+ MATH.round(((float) ((float) (win - 100)) / 100),
+									2));
 			return;
 		}
-		sendMessage(channel, "Sorry, " + sender
-				+ ", you have tested your luck and lost T"
-				+ ((float) ((float) (win - 100)) / 100) * -1);
+		sendMessage(
+				channel,
+				"Sorry, "
+						+ sender
+						+ ", you have tested your luck and lost T"
+						+ MATH.round(
+								(((float) ((float) (win - 100)) / 100) * -1), 2));
 	}
 
 	public void toggleBets(String sender, String otherargs) {
-		bets = !bets;
+		switch (otherargs) {
+		case "true": {
+			bets = true;
+			break;
+		}
+		case "false": {
+			bets = false;
+			break;
+		}
+		default: {
+			bets = !bets;
+		}
+		}
+
 		if (bets) {
 			sendMessage(channel,
 					"Bets are now open! Use !bet win OR !bet lose to bet how this game will go!");
+			betsclosure = new TimerTask() {
+
+				@Override
+				public void run() {
+					toggleBets("SERVER", "false");
+					System.out.println("4 minutes elapsed, closed bets in "
+							+ channel + " automatically!");
+				}
+
+			};
+			timer.schedule(betsclosure, 240000);
 		} else {
-			sendMessage(channel, "Bets are now closed! Good Luck!");
+			sendMessage(channel, "Bets are now closed! Good luck!");
+			betsclosure.cancel();
 		}
 	}
 
@@ -381,7 +443,7 @@ public class Bot extends PircBot {
 						channel,
 						"Sorry, "
 								+ sender
-								+ ", but the bets are currently closed! Please wait for Dan to open them again! You bet for winning this time.");
+								+ ", but the bets are currently closed! Please wait for Dan to open them again! You bet for winning this time. BloodTrail");
 				break;
 			}
 
@@ -390,7 +452,7 @@ public class Bot extends PircBot {
 						channel,
 						"Sorry, "
 								+ sender
-								+ ", but the bets are currently closed! Please wait for Dan to open them again! You bet for losing this time.");
+								+ ", but the bets are currently closed! Please wait for Dan to open them again! You bet for losing this time. BibleThump");
 				break;
 			}
 			default: {
@@ -524,13 +586,13 @@ public class Bot extends PircBot {
 					channel,
 					"The game is over, it is gloriously won! "
 							+ correct
-							+ " People bet correctly and got T0.50, the rest that bet got T0.15!");
+							+ " bet correctly and got T0.50, the rest that bet got T0.15!");
 		} else {
 			sendMessage(
 					channel,
-					"The game is over, it is lost with a big bunch of shame! "
+					"The game is over, sadly it is lost! "
 							+ correct
-							+ " People bet correctly and got T0.50, the rest that bet got T0.15!");
+							+ " bet correctly and got T0.50, the rest that bet got T0.15!");
 		}
 		betsmade = new ArrayList<String[]>();
 	}
@@ -550,8 +612,14 @@ public class Bot extends PircBot {
 		try {
 			ProfileManager.getProfileByName(destination).addFunds(
 					channel.replace("#", ""), amount);
-			sendMessage(channel, "Successfully added " + amount + " to "
-					+ destination + "'s account.");
+			if (!sender.equals("SERVER"))
+				sendMessage(
+						channel,
+						"Successfully added "
+								+ MATH.round(
+										((float) ((float) amount / (float) 100)),
+										2) + " to " + destination
+								+ "'s account.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			sendMessage(channel, "Error while adding Bucks to " + destination
@@ -560,8 +628,100 @@ public class Bot extends PircBot {
 
 	}
 
+	public void addBucksAll(String sender, String otherargs) {
+		int amount;
+		try {
+			amount = Integer.parseInt(otherargs);
+		} catch (Exception e) {
+			sendMessage(channel, "Sorry, " + sender + ", but " + otherargs
+					+ " is not a valid number. USAGE: !COMMAND AMOUNT");
+			return;
+		}
+
+		User[] users = getUsers(channel);
+
+		for (User u : users) {
+			addBucks("SERVER", u.getNick().toLowerCase() + " " + amount);
+		}
+
+	}
+
 	public void shutdown(String sender, String otherargs) {
 		terminate();
+	}
+
+	public void rateSong(String sender, String otherargs) {
+		int rating;
+
+		try {
+			rating = Integer.parseInt(otherargs);
+		} catch (Exception e) {
+			System.err.println("In " + channel + " someone rated " + otherargs
+					+ "! How stupid!");
+			return;
+		}
+		if ((rating < 1) || (rating > 10)) {
+			System.err.println("DUH! We're on a scale of 1 to 10, " + sender
+					+ " in " + channel + ". Don't try to break me.");
+			return;
+		}
+
+		if (userrequests) {
+			ProfileManager.getProfileByName(currUser).songRating(rating);
+			ratings.add(rating);
+		} else
+
+			ratings.add(rating);
+
+	}
+
+	public void resetRatings() {
+		ratings.clear();
+	}
+
+	public void clientConnected() {
+		clientconnected = true;
+	}
+
+	public void clientDisconnected() {
+		clientconnected = false;
+	}
+
+	public void toggleSongMode(String sender, String otherargs) {
+		switch (otherargs) {
+		case "true": {
+			userrequests = true;
+			break;
+		}
+		case "false": {
+			userrequests = false;
+			break;
+		}
+		default: {
+			userrequests = !userrequests;
+			break;
+		}
+		}
+	}
+
+	public boolean songMode() {
+		return userrequests;
+	}
+
+	public void myRating(String sender, String otherargs) {
+		sendMessage(channel, sender + "'s average song request rating: "
+				+ ProfileManager.getProfileByName(sender).calcAvgRating());
+	}
+
+	public void songLink(String sender, String otherargs) {
+		if (userrequests) {
+			sendMessage(channel, "Currently Playing this request: "
+					+ getOldestSongrequest()[1]);
+		} else {
+			sendMessage(
+					channel,
+					"Currently not playing user requests. Look in the top left corner for the currently playing song.");
+		}
 	}
 
 }

@@ -34,6 +34,8 @@ public class Profile {
 		if (!file.exists()) {
 			options.add(new Option("name", name, this));
 			options.add(new Option("xp", "0", this));
+			options.add(new Option("srratings", "0", this));
+			options.add(new Option("avgrating", "0", this));
 		} else {
 			try {
 				List<String> lines = TXT.readFromFile(file.getAbsolutePath());
@@ -148,5 +150,24 @@ public class Profile {
 			}
 		}
 		return false;
+	}
+	
+	public void songRating(int rating) {
+		Option o = getOption("srratings");
+		o.set(o.getValue()+"#"+rating);
+	}
+	public double calcAvgRating() {
+		String s = getOption("srratings").getValue();
+		String[] parts = s.split("#");
+		int sum = 0;
+		for (String part:parts) {
+			sum+=Integer.parseInt(part);
+		}
+		double avg = 0;
+		if (parts.length>0) {
+			avg = (double) sum/(double) parts.length;
+		}
+		getOption("avgrating").set(avg+"");
+		return avg;
 	}
 }

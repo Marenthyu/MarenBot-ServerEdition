@@ -12,9 +12,11 @@ public class Starter {
 		System.out.println("MarenBot Server Edition v0.1");
 		System.out.println("Starting connection Handler on Port 1515...");
 		try {
-			ConnectionManager.start(1515);
+
 			InstanceManager.initialize();
 			ProfileManager.intialize();
+			ConnectionManager.start(1515);
+			System.out.println("Startup done!");
 		} catch (IOException e) {
 			System.err
 					.println("Couldn't start ConnectionManager. Terminating.");
