@@ -22,6 +22,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class EditCommandWindow extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2361420933901665462L;
 	private JTextField textField;
 	private final ButtonGroup saymethodgroup = new ButtonGroup();
 	private final ButtonGroup permlevelgroup = new ButtonGroup();
@@ -41,6 +45,7 @@ public class EditCommandWindow extends JFrame {
 	private JSpinner spinner;
 	private JButton btnDelete;
 	public EditCommandWindow() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Edit Command");
 		getContentPane().setLayout(null);
 		setSize(510, 206);

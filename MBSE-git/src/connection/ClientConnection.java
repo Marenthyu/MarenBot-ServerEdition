@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import profiles.Command;
+import profiles.Option;
 import profiles.Profile;
 import profiles.ProfileManager;
 import bot.Bot;
@@ -260,6 +261,20 @@ public class ClientConnection implements Runnable {
 					out.println("end");
 					break;
 				}
+				case "messages" : {
+					for (Option o:bot.getOptions()) {
+						if (o.getName().endsWith("message")) {
+							out.println(o.getName()+"~#"+o.getValue());
+						}
+					}
+					out.println("end");
+					break;
+				}
+				case "editoption" : {
+					mode = 7;
+					out.println("ready");
+					break;
+				}
 				}
 				break;
 			}
@@ -343,6 +358,21 @@ public class ClientConnection implements Runnable {
 				}
 				mode = 0;
 				out.println("done");
+				break;
+			}
+			case 7 : {
+				String[] parts = line.split("~#");
+				try {
+					profile.getOption(parts[0]).set(parts[1]);
+				} catch (Exception e) {
+					out.println("bad");
+					mode = 0;
+					break;
+				}
+				
+				out.println("good");
+				mode = 0;
+				
 				break;
 			}
 			

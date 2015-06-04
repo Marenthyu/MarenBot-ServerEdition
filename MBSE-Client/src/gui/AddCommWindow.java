@@ -35,6 +35,7 @@ public class AddCommWindow extends JFrame {
 	boolean callmethod = false;
 
 	public AddCommWindow() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Add Command");
 		getContentPane().setLayout(null);
 

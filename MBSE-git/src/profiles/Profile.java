@@ -67,6 +67,50 @@ public class Profile {
 			}
 		}
 
+		if (getOption("joinmessage").getValue().equals("INVALID")) {
+			
+			System.out.println("joinmessage did not yet exist for "+name+". Creating messages...");
+			
+			addOption("joinmessage","MarenBot (ServerEdition) has joined this channel and is ready to rock!");
+			addOption("leavemessage","Terminating connection to this channel");
+			addOption("broadcasteronlymessage","Sorry, <sender>, but this command is only for the Broadcaster.");
+			addOption("modsonlymessage","Sorry, <sender>, but this command is only for mods.");
+			addOption("regularonlymessage","Sorry, <sender>, but this command is only for mods. (REGULAR Support to be added soon™)");
+			addOption("subscriberonlymessage","Sorry, <sender>, but this command is only for mods. SUBSCRIBER Support to be added soon™)");
+			addOption("insufficientfundsmessage","Sorry, <sender>, but it appears that you don't have enough currency to execute this command.");
+			addOption("callmethoderrormessage","Uh oh, something went wrong. Please try again.");
+			addOption("mybucksmessage","<sender>'s TrampBucks: T<amount2>");
+			addOption("songrequestmessage","Thanks for the Songrequest, <sender>! Dan will play it soon™ and if he likes it, add it to the stream Playlist!");
+			addOption("testyourluckwinmessage","Congratulations, <sender>, you have tested your luck and won T<amount2>");
+			addOption("testyourlucklosemessage","Sorry, <sender>, you have tested your luck and lost T<amount2>");
+			addOption("betsopenmessage","Bets are now open! Use !bet win OR !bet lose to bet how this game will go!");
+			addOption("betsclosemessage","Bets are now closed! Good luck!");
+			addOption("betsclosedwinmessage","Sorry, <sender>, but the bets are currently closed! Please wait for Dan to open them again! You bet for winning this time. BloodTrail");
+			addOption("betsclosedlosemessage","Sorry, <sender>, but the bets are currently closed! Please wait for Dan to open them again! You bet for losing this time. BibleThump");
+			addOption("betsclosednonemessage","Sorry, <sender>, but the bets are currently closed! Please wait for Dan to open them again! You did not bet this time.");
+			addOption("betwinwinmessage","<sender>, you already bet for winning! BloodTrail");
+			addOption("betlosewinmessage","<sender>, you successfully changed your mind from losing to winning! BloodTrail");
+			addOption("betnonewinmessage","<sender>, you successfully bet for winning! BloodTrail");
+			addOption("betloselosemessage","<sender>, you already bet for losing! BibleThump");
+			addOption("betwinlosemessage","<sender>, you successfully changed your mind from winning to losing! BibleThump");
+			addOption("betnonelosemessage","<sender>, you successfully bet for losing! BibleThump");
+			addOption("betcurrlosemessage","<sender>, you are currently betting for losing! BibleThump");
+			addOption("betcurrwinmessage","<sender>, you are currently betting for winning! BloodTrail");
+			addOption("betcurrnonemessage","<sender>, usage: !bet win OR !bet lose");
+			addOption("wongamemessage","The game is over, it is gloriously won! <correct> bet correctly and got T0.50, the rest that bet got T0.15!");
+			addOption("lostgamemessage","The game is over, sadly it is lost! <correct> bet correctly and got T0.50, the rest that bet got T0.15!");
+			addOption("bucksaddmessage","Successfully added <amount2> to <receiver>'s account.");
+			addOption("bucksadderrormessage","Error while adding Bucks to <receiver> - please try again. USAGE: !COMMAND USER AMOUNT");
+			addOption("addbucksallinvalidnumbermessage","Sorry, <sender>, but <input> is not a valid number. USAGE: !COMMAND AMOUNT");
+			addOption("myratingmessage","<sender>'s average song request rating: <rating>");
+			addOption("songlinkmessage","Currently Playing this request: <link>");
+			addOption("songlinknotplayingmessage","Currently not playing user requests. Look in the top left corner for the currently playing song.");
+			addOption("rafflestartmessage","A Raffle has been started! Type anything in chat and you will be egliable to win!");
+			addOption("raffleendmessage","The raffle has ended and the lucky winner is <winner>! Congratulations!");
+			
+			
+		}
+		
 	}
 
 	public String getName() {

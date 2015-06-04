@@ -795,4 +795,80 @@ public class ConnectionManager {
 		
 		
 	}
+	public static ArrayList<String> messages() {
+		while (busy) {
+			System.out.println("[Connection Manager] HEY! I'm busy!");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		busy = true;
+		
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		out.println("messages");
+		String line;
+		try {
+			while (!(line = in.readLine()).equals("end")) {
+				ret.add(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Error while grabbing messages from Server. odd.");
+			JOptionPane.showMessageDialog(null, "ERROR while grabbing messages from Server. Please try to update your client. If you are on the newest version, please contact Marenthyu.");
+			System.exit(1);
+		}
+		
+		busy = false;
+		return ret;
+		
+		
+	}
+	
+	public static boolean editOption(String name, String value) {
+		while (busy) {
+			System.out.println("[Connection Manager] HEY! I'm busy!");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		busy = true;
+		boolean ret = false;
+		
+		
+		out.println("editoption");
+		try {
+			if ((in.readLine()).equals("ready")) {
+				out.println(name+"~#"+value);
+				switch (in.readLine()) {
+				case "good" : {
+					ret = true;
+					break;
+				}
+				
+				case "bad" : {
+					ret = false;
+					break;
+				}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ret = false;
+		}
+		
+		
+		
+		busy = false;
+		return ret;
+	}
+	
 }

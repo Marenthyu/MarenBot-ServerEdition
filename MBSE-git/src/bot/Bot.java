@@ -31,7 +31,8 @@ public class Bot extends PircBot {
 	public ArrayList<Integer> ratings = new ArrayList<Integer>();
 	private boolean userrequests = false, raffle = false;
 	public String currUser = "NONE", currSong = "NONE";
-	private ArrayList<String> rafflepot = new ArrayList<String>(), rated = new ArrayList<String>();
+	private ArrayList<String> rafflepot = new ArrayList<String>(),
+			rated = new ArrayList<String>();
 
 	public Bot(String Name, String Channel) throws Exception {
 		profile = ProfileManager.getProfileByName(Channel.replace("#", ""));
@@ -48,8 +49,7 @@ public class Bot extends PircBot {
 			throw e;
 
 		}
-		sendMessage(channel,
-				"MarenBot (ServerEdition) has joined this channel and is ready to rock!");
+		sendMessage(channel, profile.getOption("joinmessage").getValue());
 		bets = false;
 		betsmade = new ArrayList<String[]>();
 
@@ -81,10 +81,10 @@ public class Bot extends PircBot {
 	public ArrayList<Command> getCommands() {
 		return profile.getCommands();
 	}
-	
+
 	public void terminate() {
 		// TODO Message doesn't get fired
-		sendMessage(channel, "Terminating connection to this channel");
+		sendMessage(channel, profile.getOption("leavemessage").getValue());
 		while (this.getOutgoingQueueSize() > 0) {
 			System.out
 					.println("Termination of "
@@ -101,10 +101,10 @@ public class Bot extends PircBot {
 			String hostname, String message) {
 		System.out.println("Message in " + channel + " from " + sender + ": "
 				+ message);
-		
+
 		if (raffle) {
 			boolean a = true;
-			for (String s:rafflepot) {
+			for (String s : rafflepot) {
 				if (s.equals(sender)) {
 					a = false;
 					break;
@@ -124,37 +124,35 @@ public class Bot extends PircBot {
 				break;
 			case BROADCASTER: {
 				if (!sender.equals(channel.replace("#", ""))) {
-					sendMessage(channel, "Sorry, " + sender
-							+ ", but this command is only for the Broadcaster.");
+					sendMessage(channel,
+							profile.getOption("broadcasteronlymessage")
+									.getValue().replace("<sender>", sender));
 					return;
 				}
 				break;
 			}
 			case MOD: {
 				if (!isMod(sender) && !sender.equals(channel.replace("#", ""))) {
-					sendMessage(channel, "Sorry, " + sender
-							+ ", but this command is only for mods.");
+					sendMessage(channel, profile.getOption("modsonlymessage")
+							.getValue().replace("<sender>", sender));
 					return;
 				}
 				break;
 			}
 			case REGULAR:
 				if (!isMod(sender) && !sender.equals(channel.replace("#", ""))) {
-					sendMessage(
-							channel,
-							"Sorry, "
-									+ sender
-									+ ", but this command is only for mods. (REGULAR support to be added SOON™");
+					sendMessage(channel, profile
+							.getOption("regularonlymessage").getValue()
+							.replace("<sender>", sender));
+					;
 					return;
 				}
 				break;
 			case SUBSCRIBER:
 				if (!isMod(sender) && !sender.equals(channel.replace("#", ""))) {
-					sendMessage(
-							channel,
-							"Sorry, "
-									+ sender
-									+ ", but this command is only for mods. (SUBSCRIBER support to be added SOON™");
+					sendMessage(channel,
+							profile.getOption("subscriberonlymessage")
+									.getValue().replace("<sender>", sender));
 					return;
 				}
 				break;
@@ -170,11 +168,9 @@ public class Bot extends PircBot {
 			}
 
 			if (c.getCost() > Integer.parseInt(o.getValue())) {
-				sendMessage(
-						channel,
-						"Sorry, "
-								+ sender
-								+ ", but it appears that you don't have enough TrampBucks to execute this command.");
+				sendMessage(channel,
+						profile.getOption("insufficientfundsmessage")
+								.getValue().replace("<sender>", sender));
 				return;
 			}
 			o.set((Integer.parseInt(o.getValue()) - c.getCost()) + "");
@@ -195,7 +191,8 @@ public class Bot extends PircBot {
 				} catch (InvocationTargetException e) {
 					System.err.println("INVOKED METHOD HAS CAUSED AN ERROR!");
 					sendMessage(channel,
-							"Uh oh, something went wrong. Please try again.");
+							profile.getOption("callmethoderrormessage")
+									.getValue());
 					e.printStackTrace();
 					e.getCause().printStackTrace();
 				}
@@ -329,13 +326,28 @@ public class Bot extends PircBot {
 	}
 
 	public void myBucks(String sender, String otherargs) {
+
+		Profile senderp = ProfileManager.getProfileByName(sender);
+		int amount = senderp.getFunds(channel.replace("#", ""));
+
 		sendMessage(
 				channel,
-				sender
-						+ "'s TrampBucks: T"
-						+ MATH.round(((float) ((float) (ProfileManager
-								.getProfileByName(sender).getFunds(channel
-								.replace("#", "")))) / 100), 2));
+				profile.getOption("mybucksmessage")
+						.getValue()
+						.replace("<sender>", sender)
+						.replace("<amount0>", amount + "")
+						.replace(
+								"<amount1>",
+								MATH.round(((float) ((float) (amount)) / 10), 1)
+										.toString())
+						.replace(
+								"<amount2>",
+								MATH.round(((float) ((float) (amount)) / 100),
+										2).toString())
+						.replace(
+								"<amount3>",
+								MATH.round(((float) ((float) (amount)) / 1000),
+										3).toString()));
 	}
 
 	public void songRequest(String sender, String otherargs) {
@@ -343,11 +355,8 @@ public class Bot extends PircBot {
 		s[0] = sender;
 		s[1] = otherargs;
 		songrequests.add(s);
-		sendMessage(
-				channel,
-				"Thanks for the Songrequest, "
-						+ sender
-						+ "! Dan will play it soon™ and if he likes it, add it to the stream Playlist!");
+		sendMessage(channel, profile.getOption("songrequestmessage").getValue()
+				.replace("<sender>", sender));
 	}
 
 	public String[] getOldestSongrequest() {
@@ -377,20 +386,46 @@ public class Bot extends PircBot {
 		if (win >= 100) {
 			sendMessage(
 					channel,
-					"Congratulations, "
-							+ sender
-							+ ", you have tested your luck and won T"
-							+ MATH.round(((float) ((float) (win - 100)) / 100),
-									2));
+					profile.getOption("testyourluckwinmessage")
+							.getValue()
+							.replace("<sender>", sender)
+							.replace("<amount0>", win + "")
+							.replace(
+									"<amount1>",
+									MATH.round(((float) ((float) win) / 10), 1)
+											.toString())
+							.replace(
+									"<amount2>",
+									MATH.round(((float) ((float) win) / 100), 2)
+											.toString())
+							.replace(
+									"<amount3>",
+									MATH.round(((float) ((float) win) / 1000),
+											3).toString()));
 			return;
 		}
 		sendMessage(
 				channel,
-				"Sorry, "
-						+ sender
-						+ ", you have tested your luck and lost T"
-						+ MATH.round(
-								(((float) ((float) (win - 100)) / 100) * -1), 2));
+				profile.getOption("testyourluckwinmessage")
+						.getValue()
+						.replace("<sender>", sender)
+						.replace("<amount0>", (win-100)*-1 + "")
+						.replace(
+								"<amount1>",
+								MATH.round(
+										((float) ((float) win - 100) / 10) * -1,
+										1).toString())
+						.replace(
+								"<amount2>",
+								MATH.round(
+										((float) ((float) win - 100) / 100)
+												* -1, 2).toString())
+						.replace(
+								"<amount3>",
+								MATH.round(
+										((float) ((float) win - 100) / 1000)
+												* -1, 3).toString()));
+		;
 	}
 
 	public void toggleBets(String sender, String otherargs) {
@@ -409,8 +444,8 @@ public class Bot extends PircBot {
 		}
 
 		if (bets) {
-			sendMessage(channel,
-					"Bets are now open! Use !bet win OR !bet lose to bet how this game will go!");
+			sendMessage(channel, profile.getOption("betsopenmessage")
+					.getValue());
 			betsclosure = new TimerTask() {
 
 				@Override
@@ -423,7 +458,8 @@ public class Bot extends PircBot {
 			};
 			timer.schedule(betsclosure, 240000);
 		} else {
-			sendMessage(channel, "Bets are now closed! Good luck!");
+			sendMessage(channel, profile.getOption("betsclosemessage")
+					.getValue());
 			betsclosure.cancel();
 		}
 	}
@@ -458,28 +494,19 @@ public class Bot extends PircBot {
 		if (!bets) {
 			switch (previousbet) {
 			case "win": {
-				sendMessage(
-						channel,
-						"Sorry, "
-								+ sender
-								+ ", but the bets are currently closed! Please wait for Dan to open them again! You bet for winning this time. BloodTrail");
+				sendMessage(channel, profile.getOption("betsclosedwinmessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 
 			case "lose": {
-				sendMessage(
-						channel,
-						"Sorry, "
-								+ sender
-								+ ", but the bets are currently closed! Please wait for Dan to open them again! You bet for losing this time. BibleThump");
+				sendMessage(channel, profile.getOption("betsclosedlosemessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 			default: {
-				sendMessage(
-						channel,
-						"Sorry, "
-								+ sender
-								+ ", but the bets are currently closed! Please wait for Dan to open them again! You did not bet this time.");
+				sendMessage(channel, profile.getOption("betsclosednonemessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 			}
@@ -490,25 +517,23 @@ public class Bot extends PircBot {
 		case "win": {
 			switch (previousbet) {
 			case "win": {
-				sendMessage(channel, sender
-						+ ", you already bet for winning! BloodTrail");
+				sendMessage(channel, profile.getOption("betwinwinmessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 
 			case "lose": {
 				betsmade.remove(index);
 				betsmade.add(s);
-				sendMessage(
-						channel,
-						sender
-								+ ", you successfully changed your mind from losing to winning! BloodTrail");
+				sendMessage(channel, profile.getOption("betlosewinmessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 
 			default: {
 				betsmade.add(s);
-				sendMessage(channel, sender
-						+ ", you successfully bet for winning! BloodTrail");
+				sendMessage(channel, profile.getOption("betnonewinmessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 			}
@@ -517,25 +542,23 @@ public class Bot extends PircBot {
 		case "lose": {
 			switch (previousbet) {
 			case "lose": {
-				sendMessage(channel, sender
-						+ ", you already bet for losing! BibleThump");
+				sendMessage(channel, profile.getOption("betloselosemessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 
 			case "win": {
 				betsmade.remove(index);
 				betsmade.add(s2);
-				sendMessage(
-						channel,
-						sender
-								+ ", you successfully changed your mind from winning to losing! BibleThump");
+				sendMessage(channel, profile.getOption("betwinlosemessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 
 			default: {
 				betsmade.add(s2);
-				sendMessage(channel, sender
-						+ ", you successfully bet for losing! BibleThump");
+				sendMessage(channel, profile.getOption("betnonelosemessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 			}
@@ -544,19 +567,20 @@ public class Bot extends PircBot {
 		default: {
 			switch (previousbet) {
 			case "lose": {
-				sendMessage(channel, sender
-						+ ", you are currently betting for losing! BibleThump");
+				sendMessage(channel, profile.getOption("betcurrlosemessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 
 			case "win": {
-				sendMessage(channel, sender
-						+ ", you are currently betting for winning! BloodTrail");
+				sendMessage(channel, profile.getOption("betcurrwinmessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 
 			default: {
-				sendMessage(channel, sender + ", usage: !bet win OR !bet lose");
+				sendMessage(channel, profile.getOption("betcurrnonemessage")
+						.getValue().replace("<sender>", sender));
 				break;
 			}
 			}
@@ -601,17 +625,11 @@ public class Bot extends PircBot {
 			}
 		}
 		if (winlose) {
-			sendMessage(
-					channel,
-					"The game is over, it is gloriously won! "
-							+ correct
-							+ " bet correctly and got T0.50, the rest that bet got T0.15!");
+			sendMessage(channel, profile.getOption("wongamemessage").getValue()
+					.replace("<correct>", correct + ""));
 		} else {
-			sendMessage(
-					channel,
-					"The game is over, sadly it is lost! "
-							+ correct
-							+ " bet correctly and got T0.50, the rest that bet got T0.15!");
+			sendMessage(channel, profile.getOption("lostgamemessage")
+					.getValue().replace("<correct>", correct + ""));
 		}
 		betsmade = new ArrayList<String[]>();
 	}
@@ -634,15 +652,30 @@ public class Bot extends PircBot {
 			if (!sender.equals("SERVER"))
 				sendMessage(
 						channel,
-						"Successfully added "
-								+ MATH.round(
-										((float) ((float) amount / (float) 100)),
-										2) + " to " + destination
-								+ "'s account.");
+						profile.getOption("bucksaddmessage")
+								.getValue()
+								.replace("<receiver>", destination)
+								.replace("<amount0>", amount + "")
+								.replace(
+										"<amount1>",
+										MATH.round(
+												((float) ((float) (amount)) / 10),
+												1).toString())
+								.replace(
+										"<amount2>",
+										MATH.round(
+												((float) ((float) (amount)) / 100),
+												2).toString())
+								.replace(
+										"<amount3>",
+										MATH.round(
+												((float) ((float) (amount)) / 1000),
+												3).toString()));
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			sendMessage(channel, "Error while adding Bucks to " + destination
-					+ " - please try again. USAGE: !COMMAND USER AMOUNT");
+			sendMessage(channel, profile.getOption("bucksadderrormessage")
+					.getValue().replace("<receiver>", destination));
 		}
 
 	}
@@ -652,8 +685,11 @@ public class Bot extends PircBot {
 		try {
 			amount = Integer.parseInt(otherargs);
 		} catch (Exception e) {
-			sendMessage(channel, "Sorry, " + sender + ", but " + otherargs
-					+ " is not a valid number. USAGE: !COMMAND AMOUNT");
+			sendMessage(
+					channel,
+					profile.getOption("bucksadderrormessage").getValue()
+							.replace("<sender>", sender)
+							.replace("<input>", otherargs));
 			return;
 		}
 
@@ -684,7 +720,7 @@ public class Bot extends PircBot {
 					+ " in " + channel + ". Don't try to break me.");
 			return;
 		}
-		for (String s:rated) {
+		for (String s : rated) {
 			if (s.equals(sender)) {
 				return;
 			}
@@ -695,7 +731,8 @@ public class Bot extends PircBot {
 		} else
 
 			ratings.add(rating);
-		ProfileManager.getProfileByName(sender).addFunds(channel.replace("#", ""), 5);
+		ProfileManager.getProfileByName(sender).addFunds(
+				channel.replace("#", ""), 5);
 		rated.add(sender);
 
 	}
@@ -734,36 +771,50 @@ public class Bot extends PircBot {
 	}
 
 	public void myRating(String sender, String otherargs) {
-		sendMessage(channel, sender + "'s average song request rating: "
-				+ MATH.round((float) ProfileManager.getProfileByName(sender).calcAvgRating(), 2));
+		String rating = MATH
+				.round((float) ProfileManager.getProfileByName(sender)
+						.calcAvgRating(), 2).toString();
+		sendMessage(channel, profile.getOption("myratingmessage").getValue()
+				.replace("<sender>", sender).replace("<rating>", rating));
 	}
 
 	public void songLink(String sender, String otherargs) {
+
 		if (userrequests) {
-			sendMessage(channel, "Currently Playing this request: "
-					+ getOldestSongrequest()[1]);
-		} else {
+			String link = getOldestSongrequest()[1];
 			sendMessage(
 					channel,
-					"Currently not playing user requests. Look in the top left corner for the currently playing song.");
+					profile.getOption("songlinkmessage").getValue()
+							.replace("<sender>", sender)
+							.replace("<link>", link));
+		} else {
+			sendMessage(channel, profile.getOption("songlinknotplayingmessage")
+					.getValue().replace("<sender>", sender));
 		}
 	}
-	
+
 	public void startRaffle(String sender, String otherargs) {
 		raffle = true;
 		rafflepot = new ArrayList<String>();
-		sendMessage(channel, "A Raffle has been started! Type anything in chat and you will be egliable to win!");
+		sendMessage(channel, profile.getOption("rafflestartmessage").getValue());
 	}
-	
+
 	public void endRaffle(String sender, String otherargs) {
 		raffle = false;
-		int random = (int) (Math.random()*(rafflepot.size()));
-		sendMessage(channel, "The raffle has ended and the lucky winner is "+rafflepot.get(random)+"! Congratulations!");
+		int random = (int) (Math.random() * (rafflepot.size()));
+		String winner = rafflepot.get(random);
+		sendMessage(channel, profile.getOption("raffleendmessage").getValue()
+				.replace("<winner>", winner));
 	}
-	
+
 	public void newSong(String song) {
 		currSong = song;
 		rated = new ArrayList<String>();
+	}
+
+	public ArrayList<Option> getOptions() {
+		// TODO Auto-generated method stub
+		return profile.getOptions();
 	}
 
 }

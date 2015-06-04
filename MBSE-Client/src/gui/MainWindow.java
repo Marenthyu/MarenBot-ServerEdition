@@ -8,9 +8,11 @@ import javax.swing.JFrame;
 
 import java.awt.Toolkit;
 import java.io.File;
+import java.util.Enumeration;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,6 +25,8 @@ import javax.swing.JTextField;
 
 import sound.Sound;
 import music.SongManager;
+
+import javax.swing.ButtonGroup;
 
 public class MainWindow extends JFrame {
 	/**
@@ -40,6 +44,8 @@ public class MainWindow extends JFrame {
 	private Timer timer;
 	private TimerTask refresher;
 	private JButton btnCopyAndDelete;
+	private JButton btnEditMessage;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	public MainWindow() {
 		try {
@@ -69,6 +75,7 @@ public class MainWindow extends JFrame {
 		joinleave.setBounds(10, 241, 89, 82);
 		getContentPane().add(joinleave);
 		togglebets = new JButton("Toggle Bets");
+		buttonGroup.add(togglebets);
 		togglebets.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				togglebets();
@@ -77,6 +84,7 @@ public class MainWindow extends JFrame {
 		togglebets.setBounds(163, 334, 150, 82);
 		getContentPane().add(togglebets);
 		wongame = new JButton("Won Game");
+		buttonGroup.add(wongame);
 		wongame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConnectionManager.wonGame();
@@ -85,6 +93,7 @@ public class MainWindow extends JFrame {
 		wongame.setBounds(323, 334, 85, 82);
 		getContentPane().add(wongame);
 		btnLostGame = new JButton("Lost Game");
+		buttonGroup.add(btnLostGame);
 		btnLostGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConnectionManager.lostGame();
@@ -113,6 +122,7 @@ public class MainWindow extends JFrame {
 		btnRefresh.setBounds(10, 148, 89, 82);
 		getContentPane().add(btnRefresh);
 		copysr = new JButton("Copy SongRequest");
+		buttonGroup.add(copysr);
 		copysr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				copySongRequest();
@@ -121,6 +131,7 @@ public class MainWindow extends JFrame {
 		copysr.setBounds(109, 148, 155, 82);
 		getContentPane().add(copysr);
 		delsr = new JButton("Delete SongRequest");
+		buttonGroup.add(delsr);
 		delsr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				deleteSongRequest();
@@ -129,6 +140,7 @@ public class MainWindow extends JFrame {
 		delsr.setBounds(274, 148, 134, 82);
 		getContentPane().add(delsr);
 		btnAddCommand = new JButton("Add Command");
+		buttonGroup.add(btnAddCommand);
 		btnAddCommand.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new AddCommWindow();
@@ -153,6 +165,7 @@ public class MainWindow extends JFrame {
 		link.setColumns(10);
 
 		JButton btnToggleSong = new JButton("Toggle Song");
+		buttonGroup.add(btnToggleSong);
 		btnToggleSong.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				SongManager.toggleSongMode();
@@ -162,6 +175,7 @@ public class MainWindow extends JFrame {
 		getContentPane().add(btnToggleSong);
 
 		btnCopyAndDelete = new JButton("Delete and Copy SongRequest");
+		buttonGroup.add(btnCopyAndDelete);
 		btnCopyAndDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				deleteSongRequest();
@@ -206,15 +220,26 @@ public class MainWindow extends JFrame {
 		});
 		sound4.setBounds(307, 427, 101, 82);
 		getContentPane().add(sound4);
-		
+
 		JButton btnEditCommand = new JButton("Edit Command");
+		buttonGroup.add(btnEditCommand);
 		btnEditCommand.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new EditCommandWindow();
 			}
 		});
-		btnEditCommand.setBounds(274, 11, 130, 126);
+		btnEditCommand.setBounds(274, 78, 130, 59);
 		getContentPane().add(btnEditCommand);
+
+		btnEditMessage = new JButton("Edit Message");
+		buttonGroup.add(btnEditMessage);
+		btnEditMessage.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new EditMessageWindow();
+			}
+		});
+		btnEditMessage.setBounds(274, 7, 130, 60);
+		getContentPane().add(btnEditMessage);
 
 		refresh();
 	}
@@ -473,6 +498,13 @@ public class MainWindow extends JFrame {
 		if (ConnectionManager.status()) {
 			botstatus.setText("Connected.");
 			joinleave.setText("Leave");
+
+			for (Enumeration<AbstractButton> buttons = buttonGroup
+					.getElements(); buttons.hasMoreElements();) {
+				AbstractButton button = buttons.nextElement();
+				button.setEnabled(true);
+			}
+
 			if (ConnectionManager.betstatus()) {
 				betstatus.setText("Open");
 			} else {
@@ -482,6 +514,11 @@ public class MainWindow extends JFrame {
 			botstatus.setText("Not Connected.");
 			joinleave.setText("Join");
 			betstatus.setText("Not Connected.");
+			for (Enumeration<AbstractButton> buttons = buttonGroup
+					.getElements(); buttons.hasMoreElements();) {
+				AbstractButton button = buttons.nextElement();
+				button.setEnabled(false);
+			}
 		}
 	}
 }

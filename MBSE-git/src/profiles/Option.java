@@ -95,4 +95,7 @@ public class Option {
 		return value;
 	}
 
+	public String getName() {
+		return name;
+	}
 }
