@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = 7497833988556627886L;
 	JButton joinleave = new JButton(), togglebets, wongame, btnLostGame,
-			btnRefresh, copysr, delsr, btnAddCommand, btnRemoveCommand;
+			btnRefresh, copysr, delsr, btnAddCommand;
 	JLabel lblBotStatus, botstatus = new JLabel("STATUS"), lblBetsStatus,
 			betstatus = new JLabel("STATUS");
 	private JLabel lblRequestee;
@@ -136,15 +136,6 @@ public class MainWindow extends JFrame {
 		});
 		btnAddCommand.setBounds(163, 7, 101, 130);
 		getContentPane().add(btnAddCommand);
-		btnRemoveCommand = new JButton("Remove Command");
-		btnRemoveCommand.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				delcomm(JOptionPane
-						.showInputDialog("Please enter the command to remove!"));
-			}
-		});
-		btnRemoveCommand.setBounds(274, 7, 130, 130);
-		getContentPane().add(btnRemoveCommand);
 		lblRequestee = new JLabel("Requestee:");
 		lblRequestee.setBounds(10, 61, 56, 14);
 		getContentPane().add(lblRequestee);
@@ -215,6 +206,15 @@ public class MainWindow extends JFrame {
 		});
 		sound4.setBounds(307, 427, 101, 82);
 		getContentPane().add(sound4);
+		
+		JButton btnEditCommand = new JButton("Edit Command");
+		btnEditCommand.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new EditCommandWindow();
+			}
+		});
+		btnEditCommand.setBounds(274, 11, 130, 126);
+		getContentPane().add(btnEditCommand);
 
 		refresh();
 	}
@@ -365,25 +365,6 @@ public class MainWindow extends JFrame {
 								"ERROR: Couldn't play file.",
 								JOptionPane.ERROR_MESSAGE);
 			}
-		}
-
-	}
-
-	protected void delcomm(String name) {
-		File file = new File("delcomm.wav");
-		if (file.exists()) {
-			try {
-				Sound.playFile(file);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		if (ConnectionManager.delcomm(name)) {
-			JOptionPane.showMessageDialog(null, "Command " + name
-					+ " successfully removed");
-		} else {
-			JOptionPane.showMessageDialog(null, "Could not remove " + name,
-					"ERROR", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}

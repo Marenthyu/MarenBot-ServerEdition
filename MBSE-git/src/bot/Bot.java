@@ -29,8 +29,9 @@ public class Bot extends PircBot {
 	private TimerTask passivefundgain, betsclosure;
 	public boolean clientconnected = false;
 	public ArrayList<Integer> ratings = new ArrayList<Integer>();
-	private boolean userrequests = false;
-	public String currUser = "NONE";
+	private boolean userrequests = false, raffle = false;
+	public String currUser = "NONE", currSong = "NONE";
+	private ArrayList<String> rafflepot = new ArrayList<String>(), rated = new ArrayList<String>();
 
 	public Bot(String Name, String Channel) throws Exception {
 		profile = ProfileManager.getProfileByName(Channel.replace("#", ""));
@@ -77,6 +78,10 @@ public class Bot extends PircBot {
 		return channel;
 	}
 
+	public ArrayList<Command> getCommands() {
+		return profile.getCommands();
+	}
+	
 	public void terminate() {
 		// TODO Message doesn't get fired
 		sendMessage(channel, "Terminating connection to this channel");
@@ -86,6 +91,7 @@ public class Bot extends PircBot {
 							+ channel
 							+ " imminent, but Still some messages to be sent out. Running around in circles...");
 		}
+		passivefundgain.cancel();
 		this.disconnect();
 		this.dispose();
 
@@ -95,6 +101,19 @@ public class Bot extends PircBot {
 			String hostname, String message) {
 		System.out.println("Message in " + channel + " from " + sender + ": "
 				+ message);
+		
+		if (raffle) {
+			boolean a = true;
+			for (String s:rafflepot) {
+				if (s.equals(sender)) {
+					a = false;
+					break;
+				}
+			}
+			if (a) {
+				rafflepot.add(sender);
+			}
+		}
 
 		String[] parts = message.split(" ");
 		Command c;
@@ -344,7 +363,7 @@ public class Bot extends PircBot {
 
 	public void deleteOldestSongrequest() {
 		try {
-			songrequests.remove(songrequests.size() - 1);
+			songrequests.remove(0);
 		} catch (Exception e) {
 			System.err.println("No more songrequests in instance " + channel
 					+ ", but a delete was requested.");
@@ -665,13 +684,19 @@ public class Bot extends PircBot {
 					+ " in " + channel + ". Don't try to break me.");
 			return;
 		}
-
+		for (String s:rated) {
+			if (s.equals(sender)) {
+				return;
+			}
+		}
 		if (userrequests) {
 			ProfileManager.getProfileByName(currUser).songRating(rating);
 			ratings.add(rating);
 		} else
 
 			ratings.add(rating);
+		ProfileManager.getProfileByName(sender).addFunds(channel.replace("#", ""), 5);
+		rated.add(sender);
 
 	}
 
@@ -710,7 +735,7 @@ public class Bot extends PircBot {
 
 	public void myRating(String sender, String otherargs) {
 		sendMessage(channel, sender + "'s average song request rating: "
-				+ ProfileManager.getProfileByName(sender).calcAvgRating());
+				+ MATH.round((float) ProfileManager.getProfileByName(sender).calcAvgRating(), 2));
 	}
 
 	public void songLink(String sender, String otherargs) {
@@ -722,6 +747,23 @@ public class Bot extends PircBot {
 					channel,
 					"Currently not playing user requests. Look in the top left corner for the currently playing song.");
 		}
+	}
+	
+	public void startRaffle(String sender, String otherargs) {
+		raffle = true;
+		rafflepot = new ArrayList<String>();
+		sendMessage(channel, "A Raffle has been started! Type anything in chat and you will be egliable to win!");
+	}
+	
+	public void endRaffle(String sender, String otherargs) {
+		raffle = false;
+		int random = (int) (Math.random()*(rafflepot.size()));
+		sendMessage(channel, "The raffle has ended and the lucky winner is "+rafflepot.get(random)+"! Congratulations!");
+	}
+	
+	public void newSong(String song) {
+		currSong = song;
+		rated = new ArrayList<String>();
 	}
 
 }

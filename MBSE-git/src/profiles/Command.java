@@ -168,5 +168,9 @@ public class Command {
 		value = null;
 		return null;
 	}
+	
+	public String toString() {
+		return name+"~#"+type.toString()+"~#"+permlevel.toString()+"~#"+cost+"~#"+value;
+	}
 
 }

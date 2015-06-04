@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import profiles.Command;
 import profiles.Profile;
 import profiles.ProfileManager;
 import bot.Bot;
@@ -251,6 +252,14 @@ public class ClientConnection implements Runnable {
 					out.println("end");
 					break;
 				}
+				
+				case "commands" : {
+					for (Command c:bot.getCommands()) {
+						out.println(c.toString());
+					}
+					out.println("end");
+					break;
+				}
 				}
 				break;
 			}
@@ -316,6 +325,7 @@ public class ClientConnection implements Runnable {
 				try {
 					bot.sendMessage(bot.getChannel(), "New song playing now: "
 							+ line);
+					bot.newSong(line);
 				} catch (Exception e) {
 					System.out.println("Bot was not yet in " + name
 							+ ", but a new song was received. How lovely.");

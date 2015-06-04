@@ -1,6 +1,5 @@
 package gui;
 
-import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
@@ -12,14 +11,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.JButton;
 
 import sound.Sound;
+import utils.RBGroup;
 import connection.ConnectionManager;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Enumeration;
-
 import javax.swing.JComboBox;
 
 public class AddCommWindow extends JFrame {
@@ -89,22 +87,22 @@ public class AddCommWindow extends JFrame {
 
 		JRadioButton rdbtnRegular = new JRadioButton("REGULAR");
 		plgroup.add(rdbtnRegular);
-		rdbtnRegular.setBounds(159, 64, 71, 17);
+		rdbtnRegular.setBounds(159, 62, 71, 17);
 		getContentPane().add(rdbtnRegular);
 
 		JRadioButton rdbtnSubscriber = new JRadioButton("SUBSCRIBER");
 		plgroup.add(rdbtnSubscriber);
-		rdbtnSubscriber.setBounds(236, 63, 87, 19);
+		rdbtnSubscriber.setBounds(236, 61, 87, 19);
 		getContentPane().add(rdbtnSubscriber);
 
 		JRadioButton rdbtnMod = new JRadioButton("MOD");
 		plgroup.add(rdbtnMod);
-		rdbtnMod.setBounds(325, 62, 52, 20);
+		rdbtnMod.setBounds(325, 60, 52, 20);
 		getContentPane().add(rdbtnMod);
 
 		JRadioButton rdbtnBroadcaster = new JRadioButton("BROADCASTER");
 		plgroup.add(rdbtnBroadcaster);
-		rdbtnBroadcaster.setBounds(383, 62, 105, 19);
+		rdbtnBroadcaster.setBounds(383, 61, 105, 19);
 		getContentPane().add(rdbtnBroadcaster);
 
 		JLabel lblCost = new JLabel("Cost/Gain:");
@@ -140,7 +138,7 @@ public class AddCommWindow extends JFrame {
 		JRadioButton rdbtnCost = new JRadioButton("COST");
 		rdbtnCost.setSelected(true);
 		costgaingroup.add(rdbtnCost);
-		rdbtnCost.setBounds(169, 87, 61, 23);
+		rdbtnCost.setBounds(159, 86, 61, 23);
 		getContentPane().add(rdbtnCost);
 		
 		JRadioButton rdbtnGain = new JRadioButton("GAIN");
@@ -174,7 +172,7 @@ public class AddCommWindow extends JFrame {
 
 	protected void addCommand() {
 		int cost = (int) spinner.getValue();
-		if (getSelectedButtonText(costgaingroup).equals("GAIN")) {
+		if (RBGroup.getSelectedButtonText(costgaingroup).equals("GAIN")) {
 			cost = cost*-1;
 		}
 		String value;
@@ -185,8 +183,8 @@ public class AddCommWindow extends JFrame {
 			value = txtThisCommand.getText();
 		}
 		if (ConnectionManager.addCommand(txtexample.getText(),
-				getSelectedButtonText(typegroup),
-				getSelectedButtonText(plgroup),
+				RBGroup.getSelectedButtonText(typegroup),
+				RBGroup.getSelectedButtonText(plgroup),
 				(cost) + "", value)) {
 			JOptionPane.showMessageDialog(null, "Successfully added "
 					+ txtexample.getText());
@@ -206,16 +204,4 @@ public class AddCommWindow extends JFrame {
 
 	}
 
-	public String getSelectedButtonText(ButtonGroup buttonGroup) {
-		for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons
-				.hasMoreElements();) {
-			AbstractButton button = buttons.nextElement();
-
-			if (button.isSelected()) {
-				return button.getText();
-			}
-		}
-
-		return null;
-	}
 }

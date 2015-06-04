@@ -761,4 +761,38 @@ public class ConnectionManager {
 		busy = false;
 		return ret;
 	}
+	
+	public static ArrayList<String> commands() {
+		while (busy) {
+			System.out.println("[Connection Manager] HEY! I'm busy!");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		busy = true;
+		
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		out.println("commands");
+		String line;
+		try {
+			while (!(line = in.readLine()).equals("end")) {
+				ret.add(line);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.err.println("Error while grabbing commands from Server. odd.");
+			JOptionPane.showMessageDialog(null, "ERROR while grabbing Commands from Server. Please try to update your client. If you are on the newest version, please contact Marenthyu.");
+			System.exit(1);
+		}
+		
+		busy = false;
+		return ret;
+		
+		
+	}
 }
