@@ -1,4 +1,4 @@
-package gui;
+package gui.commands;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

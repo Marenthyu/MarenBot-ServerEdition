@@ -1,4 +1,4 @@
-package gui;
+package gui.messages;
 
 import java.util.ArrayList;
 
@@ -77,6 +77,7 @@ public class EditMessageWindow extends JFrame {
 		});
 		setSize(450,135);
 		setVisible(true);
+		newItem();
 	}
 
 	protected void save() {

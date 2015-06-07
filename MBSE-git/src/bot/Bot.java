@@ -389,24 +389,24 @@ public class Bot extends PircBot {
 					profile.getOption("testyourluckwinmessage")
 							.getValue()
 							.replace("<sender>", sender)
-							.replace("<amount0>", win + "")
+							.replace("<amount0>", win-100 + "")
 							.replace(
 									"<amount1>",
-									MATH.round(((float) ((float) win) / 10), 1)
+									MATH.round(((float) ((float) win-100) / 10), 1)
 											.toString())
 							.replace(
 									"<amount2>",
-									MATH.round(((float) ((float) win) / 100), 2)
+									MATH.round(((float) ((float) win-100) / 100), 2)
 											.toString())
 							.replace(
 									"<amount3>",
-									MATH.round(((float) ((float) win) / 1000),
+									MATH.round(((float) ((float) win-100) / 1000),
 											3).toString()));
 			return;
 		}
 		sendMessage(
 				channel,
-				profile.getOption("testyourluckwinmessage")
+				profile.getOption("testyourlucklosemessage")
 						.getValue()
 						.replace("<sender>", sender)
 						.replace("<amount0>", (win-100)*-1 + "")

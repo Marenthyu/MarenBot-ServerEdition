@@ -1,6 +1,6 @@
 package main;
 
-import gui.MainWindow;
+import gui.main.MainWindow;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
